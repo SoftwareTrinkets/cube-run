@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Babylon Template</title>
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+    </head>
+    <body>
+	<canvas id="renderCanvas"></canvas>
+	<script>
+        const canvas = document.getElementById("renderCanvas"); // Get the canvas element
+        const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+       var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+            
+            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+            camera.setTarget(new BABYLON.Vector3(0,3,0));
+
+            var environmentBoxes = []
+            const speed = 100;
+            const numberOfBoxes = 12;
+            let score = 0;
+            let highscore = 0;
+            let intersecting = 0;
+            let framecount = 0;
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+            
+            var bottomPanel = new BABYLON.GUI.StackPanel();
+            bottomPanel.height = "80px";
+            bottomPanel.paddingRight = "20px";
+            bottomPanel.isVertical = true;
+            bottomPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_STRETCH;
+            bottomPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            bottomPanel.fontSize = 20;
+            advancedTexture.addControl(bottomPanel);   
+            
+            var scoreText = new BABYLON.GUI.TextBlock();
+            scoreText.text = "Score: " + score;
+            scoreText.width = "100px";
+            scoreText.color = "white";
+            scoreText.outlineWidth = "4px";
+            scoreText.outlineColor = "black";        
+            bottomPanel.addControl(scoreText);  
+            
+            var highScoreText = new BABYLON.GUI.TextBlock();
+            highScoreText.paddingTop = 50
+            highScoreText.text = "Highscore: " + highscore;
+            highScoreText.width = "200px";
+            highScoreText.color = "white";
+            highScoreText.outlineWidth = "4px";
+            highScoreText.outlineColor = "black";        
+            bottomPanel.addControl(highScoreText);  
+            
+            var box = BABYLON.MeshBuilder.CreateBox("box", {diameter: 2, segments: 32}, scene);
+            box.position.y = 0.6;
+            box.actionManager = new BABYLON.ActionManager(scene);
+            box.material = new BABYLON.StandardMaterial();
+            var ghostBoxMaterial = new BABYLON.StandardMaterial("ghostBoxMaterial", scene);
+            const changeValueHeader = (text) => {
+                scoreText.text = text;
+            }
+            scene.onBeforeRenderObservable.add(() => {
+                if(intersecting === 0){
+                    framecount++;
+                    if(framecount > 20){
+                        highScoreText.text = "Highscore: " + highscore;
+                        score = 0;
+                        changeValueHeader("Score: " + score)
+                    }
+                } else{
+                    framecount = 0;
+                }
+                if(score > highscore){
+                    highscore = score;
+                    
+                }
+            });
+            for(let i = 0; i <= numberOfBoxes; i++){
+                let environmentBox = BABYLON.MeshBuilder.CreateBox("box", {diameter: 2, segments: 32}, scene);
+                environmentBox.scaling = new BABYLON.Vector3(2,0.25,5);
+                environmentBox.position.z = (i * environmentBox.scaling.z);
+                let environmentMaterial = new BABYLON.StandardMaterial("myMaterial", scene);
+                environmentMaterial.diffuseColor = new BABYLON.Color3(0, Math.random(), 0.5);
+                environmentBox.material = environmentMaterial;
+                environmentBoxes.push(environmentBox);
+                box.actionManager.registerAction(
+                    new BABYLON.ExecuteCodeAction({
+                        trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger, 
+                        parameter: {mesh: environmentBox}}, 
+                        function() {
+                            score += 1; 
+                            changeValueHeader("Score: " + score); 
+                            BABYLON.Animation.CreateAndStartAnimation("changeColor", box, "material.diffuseColor", 60, 5, box.material.diffuseColor , environmentBox.material.diffuseColor, 0);
+                            BABYLON.Animation.CreateAndStartAnimation("changeColor", environmentBox, "material.diffuseColor", 60, 5,  environmentBox.material.diffuseColor, BABYLON.Color3.White, 0);
+                            
+                            const ghostBox = BABYLON.MeshBuilder.CreateBox("ghostBox", {diameter: 2, segments: 32}, scene);
+                            ghostBox.position = box.position.clone();
+                            
+                            ghostBoxMaterial.diffuseColor = environmentBox.material.diffuseColor;
+                            ghostBox.material = ghostBoxMaterial;
+                            const visibility = BABYLON.Animation.CreateAndStartAnimation("changeVisibility", ghostBox, "visibility", 60, 30, 1, 0, 0, null, () => {ghostBox.dispose()});
+                            scene.onBeforeRenderObservable.add(() => {
+                                if( ghostBox.position.z > - 10){
+                                    ghostBox.position.z -= (scene.deltaTime / (speed - (score < 75 ? score : 75)));
+                                } 
+                            });
+                            visibility.disposeOnEnd = true;
+                            environmentBox.material.diffuseColor = BABYLON.Color3.White();
+                            intersecting++; 
+                        }
+                    )
+                );
+                box.actionManager.registerAction(
+                    new BABYLON.ExecuteCodeAction({
+                        trigger: BABYLON.ActionManager.OnIntersectionExitTrigger, 
+                        parameter: {mesh: environmentBox}}, 
+                        function() {
+                            intersecting--;
+                        }
+                    )
+                );
+            }
+            scene.onBeforeRenderObservable.add(() => {
+                for(let i = 0; i <= numberOfBoxes; i++){
+                    const currentBox = environmentBoxes[i];
+                    const previousBox = environmentBoxes[i > 0 ? i - 1 : numberOfBoxes]
+                    if( currentBox.position.z > -10){
+                        currentBox.position.z -= (scene.deltaTime / (speed - (score < 75 ? score : 75)));
+                        
+                    } else {
+                        currentBox.position.z = previousBox.position.z + 5
+                        const random = Math.random();
+                        currentBox.material.diffuseColor = new BABYLON.Color3(0, Math.random(), 0.5);
+
+                        if(random < 0.3){
+                            currentBox.position.x = -2
+                        } else if (random > 0.3 && random < 0.6){
+                            currentBox.position.x = 0
+                        } else{
+                            currentBox.position.x = 2
+
+                        }
+                    }
+                    }
+                }
+            );
+                
+            scene.onKeyboardObservable.add((kbInfo) => {
+                if(kbInfo.event.key === "1"){
+                    if(score < 50){
+                        BABYLON.Animation.CreateAndStartAnimation("boxmove", box, "position.x", 60, 5, box.position.x, -2, 0);
+                    } else{
+                        box.position.x = -2
+                    }
+                }
+                if(kbInfo.event.key === "2"){
+                    if(score < 50){
+                        BABYLON.Animation.CreateAndStartAnimation("boxmove", box, "position.x", 60, 5, box.position.x, 0, 0);
+                        } else{
+                        box.position.x = 0
+                    }
+                }
+                if(kbInfo.event.key === "3"){
+                    if(score < 50){
+                        BABYLON.Animation.CreateAndStartAnimation("boxmove", box, "position.x", 60, 5, box.position.x, 2, 0);
+                        } else{
+                        box.position.x = 2
+                    }
+                }
+            });
+
+            scene.onPointerObservable.add((pointerInfo) => {
+                if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERTAP) {
+                    if (pointerInfo.event.offsetX / canvas.width < (1/3)) {
+                        if(score < 50){
+                        BABYLON.Animation.CreateAndStartAnimation("boxmove", box, "position.x", 60, 5, box.position.x, -2, 0);
+                        } else{
+                            box.position.x = -2
+                        }
+                    } else if (pointerInfo.event.offsetX / canvas.width > (1/3) && pointerInfo.event.offsetX / canvas.width < (2/3)){
+                        if(score < 50){
+                        BABYLON.Animation.CreateAndStartAnimation("boxmove", box, "position.x", 60, 5, box.position.x, 0, 0);
+                        } else{
+                        box.position.x = 0
+                    }
+                    }else if (pointerInfo.event.offsetX / canvas.width > (2/3)){
+                        if(score < 50){
+                        BABYLON.Animation.CreateAndStartAnimation("boxmove", box, "position.x", 60, 5, box.position.x, 2, 0);
+                        } else{
+                            box.position.x = 2
+                        }
+                    }
+                }
+            });
+
+            var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+            return scene;
+        };
+        const scene = createScene(); //Call the createScene function
+        // Register a render loop to repeatedly render the scene
+        engine.runRenderLoop(function () {
+                scene.render();
+        });
+        // Watch for browser/canvas resize events
+        window.addEventListener("resize", function () {
+                engine.resize();
+        });
+	</script>
+
+   </body>
+
+</html>
