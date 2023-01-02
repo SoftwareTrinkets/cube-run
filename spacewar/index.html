@@ -56,17 +56,23 @@
         var background = new PIXI.Sprite(texture);
         app.stage.addChild(background)
 
-        function calculateNewPosition(ship, star, speed, rotation, delta) {
+        function calculateNewPosition(ship, star, speed, rotateLeft, rotateRight, delta) {
             if(ship.accelerate === true && ship.speed < 10){
                 ship.speed += delta / 10;
             } 
             if (ship.decelerate === true && ship.speed > 0){
                 ship.speed -= delta / 10;
             }
+            if(rotateLeft){
+                ship.angle -= (delta * 2);
+            }
+            if(rotateRight){
+                ship.angle += (delta * 2);
+            }
             if(ship.speed < 0){
                 ship.speed = 0;
             }
-            ship.angle += (rotation * (delta));
+            
             const angleToStar = angle(ship.x, ship.y, star.x, star.y) ;
             const gravity = {x: Math.cos(angleToStar), y:Math.sin(angleToStar)}
             const direction = {
@@ -131,10 +137,10 @@
                     wedge.decelerate = true;
                     break;
                 case "a":
-                    wedgeRotation--;
+                    wedge.rotateLeft = true;
                     break;
                 case "d":
-                    wedgeRotation++;
+                    wedge.rotateRight = true;
                     break;
                 case "ArrowUp":
                     needle.accelerate = true;
@@ -142,10 +148,10 @@
                 case "ArrowDown":
                     needle.decelerate = true;
                 case "ArrowLeft":
-                    needleRotation--;
+                    needle.rotateLeft = true;
                     break;
                 case "ArrowRight":
-                    needleRotation++;
+                    needle.rotateRight = true;
                     break;
                 case " ":
                     if(wedge !== undefined) {
@@ -179,11 +185,23 @@
                 case "s":
                     wedge.decelerate = false;
                     break;
+                case "a":
+                    wedge.rotateLeft = false;
+                    break;
+                case "d":
+                    wedge.rotateRight = false;
+                    break;
                 case "ArrowUp":
                     needle.accelerate = false;
                     break;
                 case "ArrowDown":
                     needle.decelerate = false;
+                    break;
+                case "ArrowLeft":
+                    needle.rotateLeft = false;
+                    break;
+                case "ArrowRight":
+                    needle.rotateRight = false;
                     break;
                 default:
                     // code block
@@ -206,10 +224,10 @@
                     }
             }
             });
-            if(wedge && !calculateNewPosition(wedge, star, wedge.speed, wedgeRotation, delta)){
+            if(wedge && !calculateNewPosition(wedge, star, wedge.speed, wedge.rotateLeft, wedge.rotateRight, delta)){
                 wedge = undefined;
             }
-            if(needle && !calculateNewPosition(needle, star, needle.speed, needleRotation, delta)){
+            if(needle && !calculateNewPosition(needle, star, needle.speed, needle.rotateLeft, needle.rotateRight, delta)){
                 needle = undefined;
             }
           
