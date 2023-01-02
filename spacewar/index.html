@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+  </head>
+  <body style="background-color:black;">
+    <script>
+        function createWedge() {
+            const wedgeGraphics  = new PIXI.Graphics();
+            wedgeGraphics.beginFill(0xccffcc);
+            wedgeGraphics.moveTo(0, 0);
+            wedgeGraphics.lineTo(0, 10);
+            wedgeGraphics.lineTo(15, 5);
+            wedgeGraphics.endFill();
+            var texture = app.renderer.generateTexture(wedgeGraphics);
+            var wedge = new PIXI.Sprite(texture);
+            app.stage.addChild(wedge)
+            wedge.x = 400;
+            wedge.y = 500;
+            wedge.pivot.x = 7.5;
+            wedge.pivot.y = 5;
+            return wedge;
+        }
+
+        function createStar() {
+            const startGraphics  = new PIXI.Graphics();
+            startGraphics.beginFill(0xccffcc);
+            startGraphics.drawCircle(325, 325, 10);
+            startGraphics.endFill();
+            var texture = app.renderer.generateTexture(startGraphics);
+            var star = new PIXI.Sprite(texture);
+            app.stage.addChild(star);
+            star.x = 325;
+            star.y = 325;
+            star.pivot.x = 5;
+            star.pivot.y = 5;
+            return star;
+        }
+        
+        function angle(cx, cy, ex, ey) {
+            var dy = ey - cy;
+            var dx = ex - cx;
+            var returnAngle = Math.atan2(dy, dx); 
+            return returnAngle;
+        }
+
+        // Create the application helper and add its render target to the page
+        let app = new PIXI.Application({ width: 640, height: 640, backgroundAlpha: 0});
+        document.body.appendChild(app.view);
+
+        const backgroundGraphics  = new PIXI.Graphics();
+        backgroundGraphics.beginFill(0x153015);
+        backgroundGraphics.drawCircle(320, 320, 320);
+        backgroundGraphics.endFill();
+        var texture = app.renderer.generateTexture(backgroundGraphics);
+        var background = new PIXI.Sprite(texture);
+        app.stage.addChild(background)
+
+        function calculateNewPosition(ship, star, speed, rotation, delta) {
+            if(ship.accelerate === true && ship.speed < 10){
+                ship.speed += delta / 10;
+            } 
+            if (ship.decelerate === true && ship.speed > 0){
+                ship.speed -= delta / 10;
+            }
+            if(ship.speed < 0){
+                ship.speed = 0;
+            }
+            ship.angle += (rotation * (delta));
+            const angleToStar = angle(ship.x, ship.y, star.x, star.y) ;
+            const gravity = {x: Math.cos(angleToStar), y:Math.sin(angleToStar)}
+            const direction = {
+                x: Math.cos(ship.rotation), 
+                y: Math.sin(ship.rotation) 
+            };
+            const distanceToStar = Math.sqrt(
+                Math.pow(star.x - ship.x, 2) + 
+                Math.pow(star.y - ship.y, 2)
+            )
+
+            if (distanceToStar >= 5){
+                const gravityByDistance = {
+                    x: (gravity.x * ((1/distanceToStar))) * 40, 
+                    y: (gravity.y * ((1/distanceToStar))) * 40 
+                }
+                ship.x += (direction.x * speed) + gravityByDistance.x;
+                ship.y += (direction.y * speed) + gravityByDistance.y;
+            }  else{
+                app.stage.removeChild(ship);
+                return false;
+            }
+            return true;
+        }
+
+        function shoot(startPoint){
+            const startGraphics  = new PIXI.Graphics();
+            startGraphics.beginFill(0xccffcc);
+            startGraphics.drawCircle(startPoint.x, startPoint.y, 2);
+            startGraphics.endFill();
+            var texture = app.renderer.generateTexture(startGraphics);
+            const shot = new PIXI.Sprite(texture);
+            shot.x = startPoint.x;
+            shot.y = startPoint.y;
+            shot.mask = backgroundGraphics;
+            app.stage.addChild(shot)
+            return shot;
+        }
+
+        // The star:
+        const star = createStar();
+        // The wedge:
+        let wedge = createWedge();
+        let needle = createWedge();
+        wedge.mask = backgroundGraphics;
+        needle.mask = backgroundGraphics;
+
+        let wedgeRotation = 0;
+        let needleRotation = 0;
+        let bullets = []
+
+        wedge.speed = 0;
+        needle.speed = 0;
+
+        window.addEventListener('keydown', function(event) {
+            console.log(event.key)
+            switch(event.key) {
+                case "w":
+                    wedge.accelerate = true;
+                    break;
+                case "s":
+                    wedge.decelerate = true;
+                    break;
+                case "a":
+                    wedgeRotation--;
+                    break;
+                case "d":
+                    wedgeRotation++;
+                    break;
+                case "ArrowUp":
+                    needle.accelerate = true;
+                    break;
+                case "ArrowDown":
+                    needle.decelerate = true;
+                case "ArrowLeft":
+                    needleRotation--;
+                    break;
+                case "ArrowRight":
+                    needleRotation++;
+                    break;
+                case " ":
+                    if(wedge !== undefined) {
+                        const newBullet = shoot({x: wedge.x , y: wedge.y })
+                        const direction = {
+                            x: Math.cos(wedge.rotation), 
+                            y: Math.sin(wedge.rotation) 
+                        };
+                        bullets.push({sprite: newBullet, direction: direction, target: needle });
+                    }
+                    break;
+                case "Shift":
+                    if(needle !== undefined) {
+                        const newBullet = shoot({x: needle.x , y: needle.y })
+                        const direction = {
+                            x: Math.cos(needle.rotation), 
+                            y: Math.sin(needle.rotation) 
+                        };
+                        bullets.push({sprite: newBullet, direction: direction, target: wedge });
+                    }
+                default:
+                    // code block
+            }
+            
+        });
+        window.addEventListener('keyup', function(event){
+            switch(event.key) {
+                case "w":
+                    wedge.accelerate = false;
+                    break;
+                case "s":
+                    wedge.decelerate = false;
+                    break;
+                case "ArrowUp":
+                    needle.accelerate = false;
+                    break;
+                case "ArrowDown":
+                    needle.decelerate = false;
+                    break;
+                default:
+                    // code block
+            }
+        })
+
+        app.ticker.add((delta) => {
+            bullets.forEach((current, i) => {
+                current.sprite.x += (current.direction.x * (delta * 3));
+                current.sprite.y += (current.direction.y * (delta * 3));
+                const notInView = current.sprite.x > app.view.width || current.sprite.y > app.view.height || current.sprite.x < 0 || current.sprite.y < 0;
+                if(current.target){
+                    const hitTarget = Math.sqrt(Math.pow(current.sprite.x - current.target.x, 2) + Math.pow(current.sprite.y - current.target.y, 2)) < 5; 
+                    if(notInView || hitTarget){
+                        app.stage.removeChild(current.sprite);
+                        bullets.splice(i, 1);
+                    }
+                    if(hitTarget){
+                        app.stage.removeChild(current.target);
+                    }
+            }
+            });
+            if(wedge && !calculateNewPosition(wedge, star, wedge.speed, wedgeRotation, delta)){
+                wedge = undefined;
+            }
+            if(needle && !calculateNewPosition(needle, star, needle.speed, needleRotation, delta)){
+                needle = undefined;
+            }
+          
+        });
+    </script>
+  </body>
+</html>
