@@ -157,18 +157,18 @@
                 case "d":
                     wedge.rotationDelta++;
                     break;
-                case "ArrowUp":
+                case "i":
                     needle.accelerate = true;
                     break;
-                case "ArrowDown":
+                case "k":
                     needle.decelerate = true;
-                case "ArrowLeft":
+                case "j":
                     needle.rotationDelta--;
                     break;
-                case "ArrowRight":
+                case "l":
                     needle.rotationDelta++;
                     break;
-                case " ":
+                case "q":
                     if(wedge !== undefined) {
                         const newBullet = shoot({x: wedge.x , y: wedge.y })
                         const direction = {
@@ -178,7 +178,7 @@
                         bullets.push({sprite: newBullet, direction: direction, target: needle });
                     }
                     break;
-                case "Shift":
+                case "u":
                     if(needle !== undefined) {
                         const newBullet = shoot({x: needle.x , y: needle.y })
                         const direction = {
@@ -206,16 +206,16 @@
                 case "d":
                     wedge.rotationDelta++;
                     break;
-                case "ArrowUp":
+                case "i":
                     needle.accelerate = false;
                     break;
-                case "ArrowDown":
+                case "k":
                     needle.decelerate = false;
                     break;
-                case "ArrowLeft":
+                case "j":
                     needle.rotationDelta--;
                     break;
-                case "ArrowRight":
+                case "l":
                     needle.rotationDelta++;
                     break;
                 default:
