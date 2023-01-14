@@ -72,6 +72,19 @@
         var texture = app.renderer.generateTexture(backgroundGraphics);
         var background = new PIXI.Sprite(texture);
         app.stage.addChild(background)
+
+        function hyperspace(ship){
+            const explodeNumber = Math.random();
+            if(ship.explosionChance > explodeNumber){
+                app.stage.removeChild(ship);
+                return false;
+            } else{
+                var randomAngle = Math.random()*Math.PI*2;
+                ship.x = (Math.cos(randomAngle)*(Math.random() * 320)) + 320;
+                ship.y = (Math.sin(randomAngle)*(Math.random() * 320)) + 320;
+                return true;
+            }
+        }
         
         function calculateNewPosition(ship, star, speed, rotationDelta, delta) {
             if(ship.accelerate === true && ship.speed < 10){
@@ -141,6 +154,8 @@
         needle.speed = 0;
         wedge.rotationDelta = 0
         needle.rotationDelta = 0;
+        wedge.explosionChance = 0;
+        needle.explosionChance = 0;
 
         window.addEventListener('keydown', function(event) {
             console.log(event.key)
@@ -187,6 +202,21 @@
                         };
                         bullets.push({sprite: newBullet, direction: direction, target: wedge });
                     }
+                    break;
+                case "e":
+                    if (wedge && hyperspace(wedge)) {
+                    wedge.explosionChance += 0.05;
+                    } else {
+                        wedge = undefined
+                    }
+                    break;
+                case "o":
+                    if(needle && hyperspace(needle)) {
+                    needle.explosionChance += 0.05;
+                    } else {
+                        needle = undefined
+                    }
+                    break;
                 default:
                     // code block
             }
