@@ -17,9 +17,26 @@
             app.stage.addChild(wedge)
             wedge.x = 400;
             wedge.y = 500;
-            wedge.pivot.x = 7.5;
-            wedge.pivot.y = 5;
+            wedge.pivot.x = 5;
+            wedge.pivot.y = 7.5;
             return wedge;
+        }
+
+        function createNeedle() {
+            const needleGraphics  = new PIXI.Graphics();
+            needleGraphics.beginFill(0xccffcc);
+            needleGraphics.moveTo(0, 0);
+            needleGraphics.lineTo(0, 6);
+            needleGraphics.lineTo(25, 3);
+            needleGraphics.endFill();
+            var texture = app.renderer.generateTexture(needleGraphics);
+            var needle = new PIXI.Sprite(texture);
+            app.stage.addChild(needle)
+            needle.x = 200;
+            needle.y = 500;
+            needle.pivot.x = 12.5;
+            needle.pivot.y = 3;
+            return needle;
         }
 
         function createStar() {
@@ -55,20 +72,16 @@
         var texture = app.renderer.generateTexture(backgroundGraphics);
         var background = new PIXI.Sprite(texture);
         app.stage.addChild(background)
-
-        function calculateNewPosition(ship, star, speed, rotateLeft, rotateRight, delta) {
+        
+        function calculateNewPosition(ship, star, speed, rotationDelta, delta) {
             if(ship.accelerate === true && ship.speed < 10){
-                ship.speed += delta / 10;
+                ship.speed += (delta / 15);
             } 
             if (ship.decelerate === true && ship.speed > 0){
-                ship.speed -= delta / 10;
+                ship.speed -= (delta / 15);
             }
-            if(rotateLeft){
-                ship.angle -= (delta * 2);
-            }
-            if(rotateRight){
-                ship.angle += (delta * 2);
-            }
+            ship.angle += (rotationDelta/2) * delta;
+            
             if(ship.speed < 0){
                 ship.speed = 0;
             }
@@ -116,7 +129,7 @@
         const star = createStar();
         // The wedge:
         let wedge = createWedge();
-        let needle = createWedge();
+        let needle = createNeedle();
         wedge.mask = backgroundGraphics;
         needle.mask = backgroundGraphics;
 
@@ -126,6 +139,8 @@
 
         wedge.speed = 0;
         needle.speed = 0;
+        wedge.rotationDelta = 0
+        needle.rotationDelta = 0;
 
         window.addEventListener('keydown', function(event) {
             console.log(event.key)
@@ -137,10 +152,10 @@
                     wedge.decelerate = true;
                     break;
                 case "a":
-                    wedge.rotateLeft = true;
+                    wedge.rotationDelta--;
                     break;
                 case "d":
-                    wedge.rotateRight = true;
+                    wedge.rotationDelta++;
                     break;
                 case "ArrowUp":
                     needle.accelerate = true;
@@ -148,10 +163,10 @@
                 case "ArrowDown":
                     needle.decelerate = true;
                 case "ArrowLeft":
-                    needle.rotateLeft = true;
+                    needle.rotationDelta--;
                     break;
                 case "ArrowRight":
-                    needle.rotateRight = true;
+                    needle.rotationDelta++;
                     break;
                 case " ":
                     if(wedge !== undefined) {
@@ -186,10 +201,10 @@
                     wedge.decelerate = false;
                     break;
                 case "a":
-                    wedge.rotateLeft = false;
+                    wedge.rotationDelta--;
                     break;
                 case "d":
-                    wedge.rotateRight = false;
+                    wedge.rotationDelta++;
                     break;
                 case "ArrowUp":
                     needle.accelerate = false;
@@ -198,10 +213,10 @@
                     needle.decelerate = false;
                     break;
                 case "ArrowLeft":
-                    needle.rotateLeft = false;
+                    needle.rotationDelta--;
                     break;
                 case "ArrowRight":
-                    needle.rotateRight = false;
+                    needle.rotationDelta++;
                     break;
                 default:
                     // code block
@@ -210,8 +225,8 @@
 
         app.ticker.add((delta) => {
             bullets.forEach((current, i) => {
-                current.sprite.x += (current.direction.x * (delta * 3));
-                current.sprite.y += (current.direction.y * (delta * 3));
+                current.sprite.x += (current.direction.x * (delta * 5));
+                current.sprite.y += (current.direction.y * (delta * 5));
                 const notInView = current.sprite.x > app.view.width || current.sprite.y > app.view.height || current.sprite.x < 0 || current.sprite.y < 0;
                 if(current.target){
                     const hitTarget = Math.sqrt(Math.pow(current.sprite.x - current.target.x, 2) + Math.pow(current.sprite.y - current.target.y, 2)) < 5; 
@@ -224,10 +239,10 @@
                     }
             }
             });
-            if(wedge && !calculateNewPosition(wedge, star, wedge.speed, wedge.rotateLeft, wedge.rotateRight, delta)){
+            if(wedge && !calculateNewPosition(wedge, star, wedge.speed, wedge.rotationDelta, delta)){
                 wedge = undefined;
             }
-            if(needle && !calculateNewPosition(needle, star, needle.speed, needle.rotateLeft, needle.rotateRight, delta)){
+            if(needle && !calculateNewPosition(needle, star, needle.speed, needle.rotationDelta, delta)){
                 needle = undefined;
             }
           
