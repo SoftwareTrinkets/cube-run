@@ -1,0 +1,175 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://Puzzle.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Table.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Puzzle3of4.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Puzzle4of4.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Puzzle1of4.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Puzzle2of4.png" type="Texture" id=6]
+[ext_resource path="res://CheckConnection.gd" type="Script" id=7]
+[ext_resource path="res://CheckPlace.gd" type="Script" id=8]
+[ext_resource path="res://SpeechText.gd" type="Script" id=9]
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 128, 128 )
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 128, 128 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 128, 128 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 128, 128 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 127, 128 )
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Background" type="ColorRect" parent="."]
+margin_right = 850.0
+margin_bottom = 609.0
+mouse_filter = 2
+
+[node name="Table" type="TextureRect" parent="."]
+margin_right = 1920.0
+margin_bottom = 1080.0
+rect_scale = Vector2( 0.532, 0.564 )
+mouse_filter = 2
+texture = ExtResource( 2 )
+
+[node name="Puzzle" type="Node2D" parent="."]
+position = Vector2( -50, 6 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 1 )
+pieces = [ NodePath("Pieces/Puzzle0Of3"), NodePath("Pieces/Puzzle1Of3"), NodePath("Pieces/Puzzle2Of3"), NodePath("Pieces/Puzzle3Of3") ]
+Text = NodePath("../ColorRect/RichTextLabel")
+
+[node name="Solution" type="Node2D" parent="Puzzle"]
+
+[node name="Background" type="ColorRect" parent="Puzzle/Solution"]
+margin_left = 396.0
+margin_top = 236.0
+margin_right = 908.0
+margin_bottom = 748.0
+mouse_filter = 2
+color = Color( 0.40625, 0.155457, 0.155457, 1 )
+
+[node name="Place0" type="Area2D" parent="Puzzle/Solution"]
+position = Vector2( 524, 366 )
+scale = Vector2( 0.9, 0.9 )
+script = ExtResource( 8 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Solution/Place0"]
+shape = SubResource( 5 )
+
+[node name="Place1" type="Area2D" parent="Puzzle/Solution"]
+position = Vector2( 780, 366 )
+scale = Vector2( 0.9, 0.9 )
+script = ExtResource( 8 )
+ConnectID = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Solution/Place1"]
+shape = SubResource( 5 )
+
+[node name="Place2" type="Area2D" parent="Puzzle/Solution"]
+position = Vector2( 524, 622 )
+scale = Vector2( 0.9, 0.9 )
+script = ExtResource( 8 )
+ConnectID = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Solution/Place2"]
+shape = SubResource( 5 )
+
+[node name="Place3" type="Area2D" parent="Puzzle/Solution"]
+position = Vector2( 780, 622 )
+scale = Vector2( 0.9, 0.9 )
+script = ExtResource( 8 )
+ConnectID = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Solution/Place3"]
+shape = SubResource( 5 )
+
+[node name="Pieces" type="Node2D" parent="Puzzle"]
+
+[node name="Puzzle0Of3" type="Sprite" parent="Puzzle/Pieces"]
+position = Vector2( 1448, 340 )
+texture = ExtResource( 5 )
+script = ExtResource( 7 )
+
+[node name="Area2D" type="Area2D" parent="Puzzle/Pieces/Puzzle0Of3"]
+collision_layer = 255
+collision_mask = 255
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Pieces/Puzzle0Of3/Area2D"]
+shape = SubResource( 1 )
+
+[node name="Puzzle1Of3" type="Sprite" parent="Puzzle/Pieces"]
+position = Vector2( 1750, 340 )
+texture = ExtResource( 6 )
+script = ExtResource( 7 )
+ConnectID = 1
+
+[node name="Area2D" type="Area2D" parent="Puzzle/Pieces/Puzzle1Of3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Pieces/Puzzle1Of3/Area2D"]
+shape = SubResource( 2 )
+
+[node name="Puzzle2Of3" type="Sprite" parent="Puzzle/Pieces"]
+position = Vector2( 1448, 696 )
+texture = ExtResource( 3 )
+script = ExtResource( 7 )
+ConnectID = 2
+
+[node name="Area2D" type="Area2D" parent="Puzzle/Pieces/Puzzle2Of3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Pieces/Puzzle2Of3/Area2D"]
+shape = SubResource( 3 )
+
+[node name="Puzzle3Of3" type="Sprite" parent="Puzzle/Pieces"]
+position = Vector2( 1768, 696 )
+texture = ExtResource( 4 )
+script = ExtResource( 7 )
+ConnectID = 3
+
+[node name="Area2D" type="Area2D" parent="Puzzle/Pieces/Puzzle3Of3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puzzle/Pieces/Puzzle3Of3/Area2D"]
+shape = SubResource( 4 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = 24.0
+margin_top = 443.0
+margin_right = 995.0
+margin_bottom = 587.0
+color = Color( 0.0156863, 0.0156863, 0.0156863, 1 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="ColorRect"]
+margin_right = 971.0
+margin_bottom = 144.0
+text = "This is some test text"
+fit_content_height = true
+scroll_following = true
+script = ExtResource( 9 )
+
+[connection signal="area_entered" from="Puzzle/Solution/Place0" to="Puzzle/Solution/Place0" method="_on_Place0_area_entered"]
+[connection signal="area_exited" from="Puzzle/Solution/Place0" to="Puzzle/Solution/Place0" method="_on_Place_area_exited"]
+[connection signal="area_entered" from="Puzzle/Solution/Place1" to="Puzzle/Solution/Place1" method="_on_Place0_area_entered"]
+[connection signal="area_exited" from="Puzzle/Solution/Place1" to="Puzzle/Solution/Place1" method="_on_Place_area_exited"]
+[connection signal="area_entered" from="Puzzle/Solution/Place2" to="Puzzle/Solution/Place2" method="_on_Place0_area_entered"]
+[connection signal="area_exited" from="Puzzle/Solution/Place2" to="Puzzle/Solution/Place2" method="_on_Place_area_exited"]
+[connection signal="area_entered" from="Puzzle/Solution/Place3" to="Puzzle/Solution/Place3" method="_on_Place0_area_entered"]
+[connection signal="area_exited" from="Puzzle/Solution/Place3" to="Puzzle/Solution/Place3" method="_on_Place_area_exited"]
+[connection signal="input_event" from="Puzzle/Pieces/Puzzle0Of3/Area2D" to="Puzzle" method="_on_Area2D_input_event"]
+[connection signal="mouse_entered" from="Puzzle/Pieces/Puzzle0Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_entered" binds= [ 0 ]]
+[connection signal="mouse_exited" from="Puzzle/Pieces/Puzzle0Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_exited"]
+[connection signal="input_event" from="Puzzle/Pieces/Puzzle1Of3/Area2D" to="Puzzle" method="_on_Area2D_input_event"]
+[connection signal="mouse_entered" from="Puzzle/Pieces/Puzzle1Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_entered" binds= [ 1 ]]
+[connection signal="mouse_exited" from="Puzzle/Pieces/Puzzle1Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_exited"]
+[connection signal="input_event" from="Puzzle/Pieces/Puzzle2Of3/Area2D" to="Puzzle" method="_on_Area2D_input_event"]
+[connection signal="mouse_entered" from="Puzzle/Pieces/Puzzle2Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_entered" binds= [ 2 ]]
+[connection signal="mouse_exited" from="Puzzle/Pieces/Puzzle2Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_exited"]
+[connection signal="input_event" from="Puzzle/Pieces/Puzzle3Of3/Area2D" to="Puzzle" method="_on_Area2D_input_event"]
+[connection signal="mouse_entered" from="Puzzle/Pieces/Puzzle3Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_entered" binds= [ 3 ]]
+[connection signal="mouse_exited" from="Puzzle/Pieces/Puzzle3Of3/Area2D" to="Puzzle" method="_on_Area2D_mouse_exited"]

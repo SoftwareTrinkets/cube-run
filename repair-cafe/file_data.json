@@ -1,0 +1,35 @@
+{
+    "uuid": "09FED9A6-6FF1-4FDB-BCCA-37406A4E22C0",
+    "name": "Test Story",
+    "creator": "Twine",
+    "creatorVersion": "2.6.2",
+    "schemaName": "Harlowe 3 to JSON",
+    "schemaVersion": "0.0.6",
+    "createdAtMs": 1677578721420,
+    "passages": [
+      {
+        "name": "Untitled Passage",
+        "tags": "",
+        "id": "1",
+        "text": "This is the first passage of the story\n[[this should connect it to something]]",
+        "links": [
+          {
+            "linkText": "this should connect it to something",
+            "passageName": "this should connect it to something",
+            "original": "[[this should connect it to something]]"
+          }
+        ],
+        "hooks": [],
+        "cleanText": "This is the first passage of the story"
+      },
+      {
+        "name": "this should connect it to something",
+        "tags": "",
+        "id": "2",
+        "text": "This is the second part of the story",
+        "links": [],
+        "hooks": [],
+        "cleanText": "This is the second part of the story"
+      }
+    ]
+  }
