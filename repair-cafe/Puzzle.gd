@@ -1,6 +1,6 @@
 extends Node2D
-export var pieces = [];
-export var Text: NodePath;
+@export var pieces = [];
+@export var Text: NodePath;
 var solved_pieces = 0
 var selectedPiece;
 var hoveringPiece;

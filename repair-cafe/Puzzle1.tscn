@@ -3,25 +3,25 @@
 [ext_resource path="res://CheckConnection.gd" type="Script" id=1]
 [ext_resource path="res://CheckPlace.gd" type="Script" id=2]
 [ext_resource path="res://Puzzle.gd" type="Script" id=3]
-[ext_resource path="res://Assets/Puzzle3of4.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Puzzle4of4.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Puzzle1of4.png" type="Texture" id=6]
-[ext_resource path="res://Assets/Puzzle2of4.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Puzzle3of4.png" type="Texture2D" id=4]
+[ext_resource path="res://Assets/Puzzle4of4.png" type="Texture2D" id=5]
+[ext_resource path="res://Assets/Puzzle1of4.png" type="Texture2D" id=6]
+[ext_resource path="res://Assets/Puzzle2of4.png" type="Texture2D" id=7]
 
 [sub_resource type="RectangleShape2D" id=5]
-extents = Vector2( 128, 128 )
+size = Vector2( 128, 128 )
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 128, 128 )
+size = Vector2( 128, 128 )
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 128, 128 )
+size = Vector2( 128, 128 )
 
 [sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 128, 128 )
+size = Vector2( 128, 128 )
 
 [sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 127, 128 )
+size = Vector2( 127, 128 )
 
 [node name="Puzzle" type="Node2D"]
 position = Vector2( -50, 6 )
@@ -32,10 +32,10 @@ pieces = [ NodePath("Pieces/Puzzle0Of3"), NodePath("Pieces/Puzzle1Of3"), NodePat
 [node name="Solution" type="Node2D" parent="."]
 
 [node name="Background" type="ColorRect" parent="Solution"]
-margin_left = 396.0
-margin_top = 236.0
-margin_right = 908.0
-margin_bottom = 748.0
+offset_left = 396.0
+offset_top = 236.0
+offset_right = 908.0
+offset_bottom = 748.0
 mouse_filter = 2
 color = Color( 0.40625, 0.155457, 0.155457, 1 )
 
@@ -76,7 +76,7 @@ shape = SubResource( 5 )
 
 [node name="Pieces" type="Node2D" parent="."]
 
-[node name="Puzzle0Of3" type="Sprite" parent="Pieces"]
+[node name="Puzzle0Of3" type="Sprite2D" parent="Pieces"]
 position = Vector2( 1448, 340 )
 texture = ExtResource( 6 )
 script = ExtResource( 1 )
@@ -88,7 +88,7 @@ collision_mask = 255
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Pieces/Puzzle0Of3/Area2D"]
 shape = SubResource( 1 )
 
-[node name="Puzzle1Of3" type="Sprite" parent="Pieces"]
+[node name="Puzzle1Of3" type="Sprite2D" parent="Pieces"]
 position = Vector2( 1750, 340 )
 texture = ExtResource( 7 )
 script = ExtResource( 1 )
@@ -99,7 +99,7 @@ ConnectID = 1
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Pieces/Puzzle1Of3/Area2D"]
 shape = SubResource( 2 )
 
-[node name="Puzzle2Of3" type="Sprite" parent="Pieces"]
+[node name="Puzzle2Of3" type="Sprite2D" parent="Pieces"]
 position = Vector2( 1448, 696 )
 texture = ExtResource( 4 )
 script = ExtResource( 1 )
@@ -110,7 +110,7 @@ ConnectID = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Pieces/Puzzle2Of3/Area2D"]
 shape = SubResource( 3 )
 
-[node name="Puzzle3Of3" type="Sprite" parent="Pieces"]
+[node name="Puzzle3Of3" type="Sprite2D" parent="Pieces"]
 position = Vector2( 1768, 696 )
 texture = ExtResource( 5 )
 script = ExtResource( 1 )

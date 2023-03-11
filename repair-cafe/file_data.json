@@ -1,35 +1,64 @@
 {
-    "uuid": "09FED9A6-6FF1-4FDB-BCCA-37406A4E22C0",
-    "name": "Test Story",
-    "creator": "Twine",
-    "creatorVersion": "2.6.2",
-    "schemaName": "Harlowe 3 to JSON",
-    "schemaVersion": "0.0.6",
-    "createdAtMs": 1677578721420,
-    "passages": [
-      {
-        "name": "Untitled Passage",
-        "tags": "",
-        "id": "1",
-        "text": "This is the first passage of the story\n[[this should connect it to something]]",
-        "links": [
-          {
-            "linkText": "this should connect it to something",
-            "passageName": "this should connect it to something",
-            "original": "[[this should connect it to something]]"
-          }
-        ],
-        "hooks": [],
-        "cleanText": "This is the first passage of the story"
-      },
-      {
-        "name": "this should connect it to something",
-        "tags": "",
-        "id": "2",
-        "text": "This is the second part of the story",
-        "links": [],
-        "hooks": [],
-        "cleanText": "This is the second part of the story"
-      }
-    ]
-  }
+  "uuid": "09FED9A6-6FF1-4FDB-BCCA-37406A4E22C0",
+  "name": "Test Story",
+  "creator": "Twine",
+  "creatorVersion": "2.6.2",
+  "schemaName": "Harlowe 3 to JSON",
+  "schemaVersion": "0.0.6",
+  "createdAtMs": 1678544336396,
+  "passages": [
+	{
+	  "name": "Untitled Passage",
+	  "tags": "",
+	  "id": "1",
+	  "text": "Hi! I have a thing that I want to get fixed!\n[[Sure! What is it?]]\n[[Tough beans! Please leave!]]",
+	  "links": [
+		{
+		  "linkText": "Sure! What is it?",
+		  "passageName": "Sure! What is it?",
+		  "original": "[[Sure! What is it?]]"
+		},
+		{
+		  "linkText": "Tough beans! Please leave!",
+		  "passageName": "Tough beans! Please leave!",
+		  "original": "[[Tough beans! Please leave!]]"
+		}
+	  ],
+	  "hooks": [],
+	  "cleanText": "Hi! I have a thing that I want to get fixed!"
+	},
+	{
+	  "name": "Sure! What is it?",
+	  "tags": "",
+	  "id": "2",
+	  "text": "It's this family heirloom, it broke down after I completely submerged it in water, I have no idea why\n[[Do you think it could maybe be the water?]]",
+	  "links": [
+		{
+		  "linkText": "Do you think it could maybe be the water?",
+		  "passageName": "Do you think it could maybe be the water?",
+		  "original": "[[Do you think it could maybe be the water?]]"
+		}
+	  ],
+	  "hooks": [],
+	  "cleanText": "It's this family heirloom, it broke down after I completely submerged it in water, I have no idea why"
+	},
+	{
+	  "name": "Tough beans! Please leave!",
+	  "tags": "",
+	  "id": "3",
+	  "text": "Wow, rude!",
+	  "links": [],
+	  "hooks": [],
+	  "cleanText": "Wow, rude!"
+	},
+	{
+	  "name": "Do you think it could maybe be the water?",
+	  "tags": "",
+	  "id": "4",
+	  "text": "Wow, now that you say it, maybe electonical devices can't deal with that much saltwater? I'll stop bringing it to the beach then!",
+	  "links": [],
+	  "hooks": [],
+	  "cleanText": "Wow, now that you say it, maybe electonical devices can't deal with that much saltwater? I'll stop bringing it to the beach then!"
+	}
+  ]
+}

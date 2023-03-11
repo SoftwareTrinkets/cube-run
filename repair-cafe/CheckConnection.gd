@@ -1,8 +1,8 @@
-extends Sprite
-export var ConnectID: int
+extends Sprite2D
+@export var ConnectID: int
 var puzzle;
-export var connected = false;
-export var ReleasePlace: Vector2;
+@export var connected = false;
+@export var ReleasePlace: Vector2;
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	puzzle = get_tree().current_scene.get_node("Puzzle")

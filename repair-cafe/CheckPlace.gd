@@ -1,6 +1,6 @@
 extends Area2D
 
-export var ConnectID: int;
+@export var ConnectID: int;
 var HasPiece = -1;
 
 func _on_Place0_area_entered(area):

@@ -1,37 +1,47 @@
 extends RichTextLabel
 
+var loadedTextArray = {}
+var passages = []
+var currentID = 1;
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-var file_data = {  
-}
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	loadjson()
-	#if file_data.has("passages"):
-	#	 print(file_data.passages[0].text)
-
-func change_speech_text(newText: String):
-	self.text = newText
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-
 
 func savejson():
-	var file = File.new()
-	file.open("res://file_data.json", File.WRITE)
-	file.store_line(to_json(file_data))
+	var file = FileAccess.open("res://file_data.json",FileAccess.WRITE)
+	file.store_line(JSON.new().stringify(loadedTextArray))
 	file.close()
 
 func loadjson():
-	var file = File.new()
+	var file = FileAccess.open("res://file_data.json",FileAccess.READ)
 	if not file.file_exists("res://file_data.json"):
 		print("File does not exist")
 		savejson()
 		return
-	file.open("res://file_data.json", File.READ)
-	var data = parse_json(file.get_as_text())
-	print(data.passages[0].cleanText)
-	file_data = data
 
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(file.get_as_text())
+	var data = test_json_conv.get_data()
+	loadedTextArray = data
+	passages.resize(data.passages.size())
+	for passage in data.passages:
+		var passageID = int(passage.id);
+		var passageText = passage.cleanText;
+		if passage.links.size() > 0:
+			for link in passage.links:
+				var ID = findIDfromName(link.passageName);
+				passageText += "\n > [url=" + str(ID) + "]" + link.passageName + "[/url]";
+		passages.insert(passageID, passageText);
+
+func findIDfromName(name: String):
+	for passage in loadedTextArray.passages:
+		if passage.name == name:
+			return int(passage.id)
+	
+func _process(delta):
+	if Input.is_action_just_pressed("next_line"):
+		self.text =  passages[currentID];
+
+func _on_meta_clicked(meta):
+	currentID = int(meta)
+	self.text =  passages[currentID];
